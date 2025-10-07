@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Storage</title>
+</head>
+<body>
+  <h1>🔐 My Private Storage</h1>
+  <p>Firebase connection goes here</p>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAlt-D7PqYxPUs8t2nmnzkO13eriWp_UN0",
+      authDomain: "mystorage-5e7af.firebaseapp.com",
+      projectId: "mystorage-5e7af",
+      storageBucket: "mystorage-5e7af.firebasestorage.app",
+      messagingSenderId: "206631078999",
+      appId: "1:206631078999:web:57702614224b3c9e996712",
+      measurementId: "G-VBNCMYNH5H"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    console.log("Firebase Connected ✅");
+  </script>
+</body>
+</html>
