@@ -186,7 +186,7 @@
   #pasteModal input[type="text"]{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);margin-bottom:8px}
 
   /* settings panel */
-  .settings-panel{position:fixed;right:-520px;top:0;height:100%;width:520px;background:linear-gradient(180deg,var(--panel-bg),var(--panel-strong));backdrop-filter:blur(var(--glass-blur));padding:18px;border-left:1px solid rgba(255,255,255,0.03);z-index:20;transition:right .28s;overflow:auto}
+  .settings-panel{position:fixed;right:-520px;top:0;height:100%;width:480px;background:linear-gradient(180deg,var(--panel-bg),var(--panel-strong));backdrop-filter:blur(var(--glass-blur));padding:18px;border-left:1px solid rgba(255,255,255,0.03);z-index:20;transition:right .28s;overflow:auto}
   .settings-panel.open{right:0}
   .theme-option{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;border:1px solid rgba(255,255,255,0.02);margin-bottom:10px}
   .theme-option.active{outline:2px solid rgba(255,255,255,0.06)}
@@ -199,17 +199,56 @@
   /* context menu */
   #ctxMenu{position:fixed;display:none;background:var(--panel-strong);padding:6px;border-radius:8px;z-index:50;border:1px solid rgba(255,255,255,0.04) }
 
-  /* responsive */
-  @media (max-width:1200px){ #fileList{grid-template-columns:repeat(4,1fr)} .settings-panel{width:420px} }
-  @media (max-width:920px){ #fileList{grid-template-columns:repeat(3,1fr)} .settings-panel{width:360px} }
-  @media (max-width:640px){ #fileList{grid-template-columns:repeat(2,1fr)} .login-box{width:320px} .top-row { flex-direction: column; align-items: stretch; gap:8px } }
+  /* toast container (top-right) */
+  #toastContainer{position:fixed;top:18px;right:18px;z-index:1000;display:flex;flex-direction:column;gap:8px;align-items:flex-end;pointer-events:none}
+  .toast{
+    pointer-events:auto;
+    min-width:220px;
+    max-width:360px;
+    padding:10px 12px;
+    border-radius:10px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+    color:var(--text);
+    font-weight:600;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    opacity:0;
+    transform:translateY(-10px) scale(0.98);
+    transition:all .26s cubic-bezier(.2,.9,.2,1);
+    border:1px solid rgba(255,255,255,0.03);
+    background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  }
+  .toast.show{opacity:1;transform:translateY(0) scale(1);}
+  .toast.info{ background: linear-gradient(90deg, rgba(76,140,255,0.14), rgba(155,195,255,0.06)); color: var(--text); }
+  .toast.success{ background: linear-gradient(90deg, rgba(76,255,140,0.12), rgba(155,255,195,0.04)); color: var(--text); }
+  .toast.warn{ background: linear-gradient(90deg, rgba(255,180,76,0.12), rgba(255,220,155,0.04)); color: var(--text); }
+  .toast.error{ background: linear-gradient(90deg, rgba(255,76,76,0.14), rgba(255,155,155,0.04)); color: var(--text); }
 
-  /* small helper classes used by new features */
-  .muted-small{font-size:12px;color:var(--muted)}
-  .tag{display:inline-block;padding:4px 6px;border-radius:6px;background:rgba(255,255,255,0.04);margin:2px 4px;font-size:12px}
-  .selected-file{outline:2px solid rgba(255,255,255,0.06)}
-  .hidden{display:none}
-  .kbd{padding:2px 6px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:rgba(0,0,0,0.2);font-size:12px}
+  /* confirm / prompt modal (centered) */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:1100}
+  .modal-card{width:min(560px,92%);background:linear-gradient(180deg,var(--panel-bg),var(--panel-strong));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 18px 48px rgba(0,0,0,0.5);color:var(--text)}
+  .modal-card h3{margin:0 0 8px;color:var(--accent)}
+  .modal-card p{margin:0 0 12px;color:var(--muted)}
+  .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+  .modal-input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
+
+  /* custom color swatch button */
+  .color-swatch{width:44px;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);cursor:pointer;display:inline-block;vertical-align:middle}
+  .color-row{display:flex;gap:8px;align-items:center}
+
+  /* hide native color input but keep it accessible */
+  input[type="color"].native-hidden{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+
+  /* custom select - styled native select */
+  .styled-select{position:relative;display:inline-block;width:100%}
+  .styled-select select{appearance:none;-webkit-appearance:none;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);width:100%}
+  .styled-select:after{content:"▾";position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted)}
+
+  /* responsive */
+  @media (max-width:1200px){ #fileList{grid-template-columns:repeat(4,1fr)} .settings-panel{width:360px} }
+  @media (max-width:920px){ #fileList{grid-template-columns:repeat(3,1fr)} .settings-panel{width:320px} }
+  @media (max-width:640px){ #fileList{grid-template-columns:repeat(2,1fr)} .login-box{width:320px} .top-row { flex-direction: column; align-items: stretch; gap:8px } }
 </style>
 </head>
 <body>
@@ -226,7 +265,7 @@
         <input id="viewId" class="input" type="password" placeholder="Input view id" aria-label="View ID" />
         <div class="login-actions" style="margin-top:8px">
           <button id="loginBtn" class="btn primary">Log In</button>
-          <button id="demoLogin" class="btn ghost" title="Demo login">Demo</button>
+
         </div>
         <div id="loginError" class="login-error" role="alert"></div>
       </div>
@@ -271,14 +310,7 @@
 
             <div style="width:12px"></div>
             <label class="small-muted" style="display:flex;align-items:center;gap:6px">
-              <input id="multiSelectToggle" type="checkbox" /> Multi-select
             </label>
-          </div>
-
-          <div style="display:flex;gap:8px;align-items:center">
-            <button id="selectAllBtn" class="control-btn secondary" title="Select all visible">Select All</button>
-            <button id="clearSelectionBtn" class="control-btn secondary" title="Clear selection">Clear</button>
-            <div class="small-muted" id="selectedCount" aria-live="polite">0 selected</div>
           </div>
         </div>
 
@@ -347,12 +379,18 @@
 
   <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
     <span class="small-muted">Primary accent</span>
-    <input id="accentColor" type="color" value="#ff4c4c" aria-label="Primary accent color">
+    <div class="color-row">
+      <div id="accentPreview" class="color-swatch" title="Primary accent"></div>
+      <input id="accentNative" class="native-hidden" type="color" value="#ff4c4c" aria-label="Primary accent color">
+    </div>
   </label>
 
   <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
     <span class="small-muted">Secondary accent (buttons)</span>
-    <input id="accentColor2" type="color" value="#ff9b9b" aria-label="Secondary accent color">
+    <div class="color-row">
+      <div id="accent2Preview" class="color-swatch" title="Secondary accent"></div>
+      <input id="accentNative2" class="native-hidden" type="color" value="#ff9b9b" aria-label="Secondary accent color">
+    </div>
   </label>
 
   <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
@@ -367,11 +405,13 @@
 
   <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
     <span class="small-muted">Background anim</span>
-    <select id="bgMode">
-      <option value="particles">Particles</option>
-      <option value="waves">Waves</option>
-      <option value="off">Off</option>
-    </select>
+    <div class="styled-select" style="width:150px">
+      <select id="bgMode">
+        <option value="particles">Particles</option>
+        <option value="waves">Waves</option>
+        <option value="off">Off</option>
+      </select>
+    </div>
   </label>
 
   <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
@@ -383,88 +423,14 @@
   <input id="particleRange" type="range" min="20" max="300" value="120" style="width:100%;margin-top:8px">
 
   <div style="margin-top:12px" class="small-muted">Font</div>
-  <select id="fontSelect" style="width:100%;margin-top:8px;">
-    <option value="Inter, system-ui, -apple-system, 'Segoe UI', Arial">Inter (default)</option>
-    <option value="'Segoe UI', system-ui, -apple-system, Arial">Segoe UI</option>
-    <option value="Arial, Helvetica, sans-serif">Arial</option>
-    <option value="'Courier New', monospace">Monospace</option>
-  </select>
-
-  <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:12px 0">
-
-  <!-- New features controls injected in settings (many toggles & controls) -->
-  <div style="margin-bottom:8px;font-weight:700;color:var(--muted)">Behavior & Tools</div>
-
-  <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <span class="small-muted">Page size</span>
-    <select id="pageSizeSelect" aria-label="Items per page">
-      <option value="12">12</option>
-      <option value="25" selected>25</option>
-      <option value="50">50</option>
-      <option value="100">100</option>
+  <div class="styled-select" style="margin-top:8px;">
+    <select id="fontSelect" style="width:100%;">
+      <option value="Inter, system-ui, -apple-system, 'Segoe UI', Arial">Inter (default)</option>
+      <option value="'Segoe UI', system-ui, -apple-system, Arial">Segoe UI</option>
+      <option value="Arial, Helvetica, sans-serif">Arial</option>
+      <option value="'Courier New', monospace">Monospace</option>
     </select>
-  </label>
-
-  <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <span class="small-muted">View mode</span>
-    <select id="viewModeSelect">
-      <option value="grid">Grid</option>
-      <option value="list">List</option>
-      <option value="compact">Compact Grid</option>
-    </select>
-  </label>
-
-  <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <span class="small-muted">Enable inline rename</span>
-    <input id="toggleInlineRename" type="checkbox" checked>
-  </label>
-
-  <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <span class="small-muted">Enable tags (metadata)</span>
-    <input id="toggleTags" type="checkbox" checked>
-  </label>
-
-  <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <span class="small-muted">Show file size</span>
-    <input id="showFileSize" type="checkbox" checked>
-  </label>
-
-  <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <span class="small-muted">Show upload date</span>
-    <input id="showUploadDate" type="checkbox" checked>
-  </label>
-
-  <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <span class="small-muted">Auto refresh</span>
-    <input id="toggleAutoRefresh" type="checkbox">
-  </label>
-
-  <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <span class="small-muted">Auto refresh interval (s)</span>
-    <input id="autoRefreshInterval" type="number" min="5" max="600" value="30" style="width:120px">
-  </label>
-
-  <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <span class="small-muted">Enable keyboard shortcuts</span>
-    <input id="toggleShortcuts" type="checkbox" checked>
-  </label>
-
-  <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <span class="small-muted">Enable right-click menu</span>
-    <input id="toggleContextMenu" type="checkbox" checked>
-  </label>
-
-  <div style="height:8px"></div>
-
-  <button id="downloadSelected" class="btn secondary" style="width:100%;margin-bottom:8px">Download Selected (new tab)</button>
-  <button id="bulkDeleteBtn" class="btn primary" style="width:100%;margin-bottom:8px">Delete Selected</button>
-  <button id="exportMeta" class="btn ghost" style="width:100%;margin-bottom:8px">Export Metadata (JSON)</button>
-  <button id="importMeta" class="btn secondary" style="width:100%;margin-bottom:8px">Import Metadata</button>
-
-  <div style="height:8px"></div>
-
-  <button id="demoPopulate" class="btn ghost" style="width:100%;margin-bottom:8px">Populate Demo Files</button>
-  <button id="resetSettings" class="btn ghost" style="width:100%;margin-bottom:8px">Reset Settings</button>
+  </div>
 
   <div style="height:12px"></div>
   <button id="saveSettings" class="btn primary" style="width:100%">Save Settings</button>
@@ -476,14 +442,18 @@
   <button id="closeSettings" class="btn ghost" style="width:100%">Close</button>
 </div>
 
-<!-- app logic (supabase + UI + 100+ features merged into settings) -->
+<!-- TOAST container -->
+<div id="toastContainer" aria-hidden="true"></div>
+
+<!-- confirm/prompt container (appends dynamically) -->
+
+<!-- app logic (supabase + UI) -->
 <script type="module">
 /* =============================================================================
-   Merged single-file app
-   - Preserves original CSS & layout (your provided script)
-   - Keeps login flow and Supabase config
-   - Adds many extra features and settings integrated into the Settings panel
-   - Stores small file metadata locally (tags/notes) and persists settings to localStorage
+   Single-file app with Paste HTML capability added.
+   - Paste HTML modal saves HTML text as a file using existing uploadFile(file) routine.
+   - Added: top-right toast notifications (theme-aware), custom confirm & prompt modals,
+            themed color swatches, styled selects. Replaced native alerts/confirms/prompts.
    ============================================================================= */
 
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
@@ -500,9 +470,11 @@ const VIEW_ID = '12321';
 const $ = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 
-/* ========== FEATURE / SETTINGS STORAGE ========== */
-const SETTINGS_KEY = 'my_storage_settings_v4';
-const META_KEY = 'my_storage_meta_v1'; // local metadata (tags/notes)
+let currentPage = 1;
+let itemsPerPage = 25; // 5x5
+
+/* settings persistence */
+const SETTINGS_KEY = 'my_storage_settings_v3';
 const defaultSettings = {
   theme: 'black',
   accent: '#ff4c4c',
@@ -517,57 +489,114 @@ const defaultSettings = {
   viewMode: 'grid',
   compactMode: false,
   maxFileSizeMB: 200,
-  language: 'en',
-
-  // new features toggles & defaults
-  inlineRename: true,
-  tagsOn: true,
-  showFileSize: true,
-  showUploadDate: true,
-  autoRefresh: false,
-  autoRefreshInterval: 30,
-  shortcutsOn: true,
-  contextMenuOn: true,
-  multiSelectOn: true,
-  confirmDelete: true
+  language: 'en'
 };
 
-function loadSettings(){ try{ const raw = localStorage.getItem(SETTINGS_KEY); return raw ? {...defaultSettings, ...JSON.parse(raw)} : {...defaultSettings}; }catch(e){ console.error(e); return {...defaultSettings}; } }
+function loadSettings(){ try{ const raw = localStorage.getItem(SETTINGS_KEY); return raw ? {...defaultSettings, ...JSON.parse(raw)} : {...defaultSettings}; }catch(e){ return {...defaultSettings}; } }
 function saveSettings(s){ localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); }
 
-function loadMeta(){ try{ const raw = localStorage.getItem(META_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } }
-function saveMeta(m){ localStorage.setItem(META_KEY, JSON.stringify(m)); }
-
 let SETTINGS = loadSettings();
-let META = loadMeta();
 
-/* UI state */
-let currentPage = 1;
-let itemsPerPage = SETTINGS.pageSize || 25;
-let multiSelectMode = SETTINGS.multiSelectOn;
-let selectedFiles = new Set();
-let autoRefreshTimer = null;
-let lastList = []; // last retrieved files (for metadata merging)
+/* ----------------------
+   Notification & Modals
+   ---------------------- */
+
+/* show top-right toasts */
+function showToast(message, type='info', opts={duration:3000}) {
+  const container = $('#toastContainer');
+  if(!container) return console.log('Toast:', message);
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type || 'info');
+  el.innerHTML = `<div style="flex:1">${message}</div><button aria-label="Dismiss" style="background:transparent;border:none;color:var(--muted);font-weight:700;cursor:pointer">✕</button>`;
+  const btn = el.querySelector('button');
+  btn.addEventListener('click', ()=> { el.classList.remove('show'); setTimeout(()=> el.remove(), 260); });
+  container.appendChild(el);
+  // small delay to allow CSS transition
+  requestAnimationFrame(()=> el.classList.add('show'));
+  if(opts.duration && opts.duration > 0) {
+    setTimeout(()=> { el.classList.remove('show'); setTimeout(()=> el.remove(), 260); }, opts.duration);
+  }
+}
+
+/* show confirm modal (async) */
+function showConfirm(message, title='Confirm') {
+  return new Promise(resolve => {
+    const ov = document.createElement('div'); ov.className = 'modal-overlay';
+    ov.innerHTML = `<div class="modal-card" role="dialog" aria-modal="true">
+      <h3>${title}</h3>
+      <p>${message}</p>
+      <div class="modal-actions">
+        <button class="btn ghost modal-cancel">Cancel</button>
+        <button class="btn del modal-confirm">Confirm</button>
+      </div>
+    </div>`;
+    document.body.appendChild(ov);
+    ov.querySelector('.modal-confirm').addEventListener('click', ()=> { ov.remove(); resolve(true); });
+    ov.querySelector('.modal-cancel').addEventListener('click', ()=> { ov.remove(); resolve(false); });
+  });
+}
+
+/* show prompt modal (async) - for rename etc */
+function showPrompt(message, defaultValue='', title='Input') {
+  return new Promise(resolve => {
+    const ov = document.createElement('div'); ov.className = 'modal-overlay';
+    ov.innerHTML = `<div class="modal-card" role="dialog" aria-modal="true">
+      <h3>${title}</h3>
+      <p>${message}</p>
+      <input class="modal-input" value="${(defaultValue||'').replace(/"/g,'&quot;')}" />
+      <div class="modal-actions">
+        <button class="btn ghost modal-cancel">Cancel</button>
+        <button class="btn primary modal-ok">OK</button>
+      </div>
+    </div>`;
+    document.body.appendChild(ov);
+    const input = ov.querySelector('.modal-input');
+    setTimeout(()=> input.focus(), 40);
+    ov.querySelector('.modal-ok').addEventListener('click', ()=> { const v = input.value.trim(); ov.remove(); resolve(v); });
+    ov.querySelector('.modal-cancel').addEventListener('click', ()=> { ov.remove(); resolve(null); });
+    input.addEventListener('keydown', (e)=> { if(e.key === 'Enter'){ e.preventDefault(); ov.querySelector('.modal-ok').click(); } });
+  });
+}
+
+/* small helper to show persistent error area (used for upload) */
+function showUploadError(msg){ $('#uploadError').textContent = msg || ''; if(msg) showToast(msg, 'error', {duration:4000}); }
+
+/* helpers to show settings saved */
+function showSettingsSaved(){ showToast('Settings saved', 'success'); }
+
+/* ----------------------
+   Core app functions
+   ---------------------- */
 
 function applySettings(s){
-  // apply visual and behavioral settings
+  // theme
   document.body.classList.remove('theme-black','theme-white','theme-red','theme-blue','theme-green','theme-purple','theme-gold','theme-gray');
   if(s.theme) document.body.classList.add('theme-'+s.theme);
 
+  // accents
   document.documentElement.style.setProperty('--accent', s.accent);
   document.documentElement.style.setProperty('--accent2', s.accent2);
 
+  // update small preview swatches
+  const ap = $('#accentPreview'); if(ap) ap.style.background = s.accent;
+  const a2p = $('#accent2Preview'); if(a2p) a2p.style.background = s.accent2;
+
+  // radius
   document.documentElement.style.setProperty('--radius', s.radiusOn ? '12px' : '4px');
 
+  // glow
   if(s.glowOn) document.body.classList.remove('no-glow'); else document.body.classList.add('no-glow');
   document.documentElement.style.setProperty('--glow', s.glowOn ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0)');
 
+  // font
   document.documentElement.style.setProperty('--font-family', s.font);
   document.body.style.fontFamily = s.font;
 
+  // view / compact
   itemsPerPage = s.pageSize || itemsPerPage;
-  document.getElementById('fileList').classList.toggle('list', s.viewMode === 'list');
-  document.getElementById('fileList').classList.toggle('compact', s.viewMode === 'compact');
+  const fl = document.getElementById('fileList');
+  if(fl) fl.classList.toggle('list', s.viewMode === 'list');
+  if(fl) fl.classList.toggle('compact', s.compactMode);
 
   // background controllers
   if(s.bgMode === 'particles'){ window.Particles && window.Particles.start(); window.Waves && window.Waves.stop && window.Waves.stop(); }
@@ -578,86 +607,71 @@ function applySettings(s){
     if(s.particlesOn) window.Particles.start(); else window.Particles.stop();
     window.Particles.setDensity(s.particleDensity);
   }
-
-  // behavioral toggles
-  multiSelectMode = !!s.multiSelectOn;
-  document.getElementById('multiSelectToggle').checked = !!s.multiSelectOn;
-
-  // Auto-refresh
-  if(autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
-  if(s.autoRefresh){
-    autoRefreshTimer = setInterval(()=> listFiles(), (s.autoRefreshInterval||30)*1000);
-  }
 }
 
-/* populate settings UI controls with values */
+/* populate settings UI */
 function populateSettingsUI(s){
   document.querySelectorAll('.theme-option').forEach(el => el.classList.toggle('active', el.dataset.theme === s.theme));
-  $('#accentColor').value = s.accent;
-  $('#accentColor2').value = s.accent2;
+  $('#accentNative').value = s.accent;
+  $('#accentNative2').value = s.accent2;
+  $('#accentPreview').style.background = s.accent;
+  $('#accent2Preview').style.background = s.accent2;
   $('#toggleRadius').checked = s.radiusOn;
   $('#toggleGlow').checked = s.glowOn;
   $('#bgMode').value = s.bgMode;
   $('#toggleParticles').checked = s.particlesOn;
   $('#particleRange').value = s.particleDensity;
   $('#fontSelect').value = s.font;
-
-  $('#pageSizeSelect').value = s.pageSize;
-  $('#viewModeSelect').value = s.viewMode;
-  $('#toggleInlineRename').checked = !!s.inlineRename;
-  $('#toggleTags').checked = !!s.tagsOn;
-  $('#showFileSize').checked = !!s.showFileSize;
-  $('#showUploadDate').checked = !!s.showUploadDate;
-  $('#toggleAutoRefresh').checked = !!s.autoRefresh;
-  $('#autoRefreshInterval').value = s.autoRefreshInterval || 30;
-  $('#toggleShortcuts').checked = !!s.shortcutsOn;
-  $('#toggleContextMenu').checked = !!s.contextMenuOn;
 }
 
-/* small helpers */
-function fmtBytes(bytes){
-  if(bytes === 0) return '0 B';
-  const k = 1024, sizes = ['B','KB','MB','GB','TB'];
-  const i = Math.floor(Math.log(bytes)/Math.log(k));
-  return parseFloat((bytes / Math.pow(k,i)).toFixed(2)) + ' ' + sizes[i];
+/* read UI -> settings */
+function readSettingsFromUI(){
+  const active = document.querySelector('.theme-option.active');
+  return {
+    theme: active ? active.dataset.theme : SETTINGS.theme,
+    accent: $('#accentNative').value,
+    accent2: $('#accentNative2').value,
+    radiusOn: $('#toggleRadius').checked,
+    glowOn: $('#toggleGlow').checked,
+    bgMode: $('#bgMode').value,
+    particlesOn: $('#toggleParticles').checked,
+    particleDensity: parseInt($('#particleRange').value,10),
+    font: $('#fontSelect').value
+  };
 }
-function nowISO(){ return new Date().toISOString(); }
 
-/* show messages */
-function showLoginError(msg){ $('#loginError').textContent = msg || ''; }
-function showUploadError(msg){ $('#uploadError').textContent = msg || ''; }
+/* initial apply */
+applySettings(SETTINGS);
+populateSettingsUI(SETTINGS);
 
-/* ========= Upload + Paste handling (kept from original, extended) ========= */
-async function uploadFile(file, showProgress=true){
-  if(!file) return showUploadError('No file selected');
-  if(file.size > (SETTINGS.maxFileSizeMB || 200)*1024*1024) return showUploadError(`File exceeds max size of ${SETTINGS.maxFileSizeMB}MB`);
+/* ---------- Supabase actions ---------- */
+
+async function uploadFile(file){
+  if(!file) { showUploadError('No file selected'); return; }
+  if(file.size > (SETTINGS.maxFileSizeMB || 200)*1024*1024) { showUploadError(`File exceeds max size of ${SETTINGS.maxFileSizeMB}MB`); return; }
   showUploadError('');
-  if(showProgress){
-    $('#progressContainer').style.display = 'block';
-    $('#uploadProgress').value = 0; $('#progressText').textContent = '0%';
-  }
+  $('#progressContainer').style.display = 'block';
+  $('#uploadProgress').value = 0; $('#progressText').textContent = '0%';
   const path = `${FOLDER}${file.name}`;
   try{
-    if(showProgress){ $('#uploadProgress').value = 20; $('#progressText').textContent = '20%'; }
+    $('#uploadProgress').value = 20; $('#progressText').textContent = '20%';
     const { error } = await supabase.storage.from(BUCKET).upload(path, file, { upsert: true });
     if(error) throw error;
-
-    // record metadata locally with timestamp & size
-    META[file.name] = META[file.name] || {};
-    META[file.name].uploadedAt = new Date().toISOString();
-    META[file.name].size = file.size;
-    saveMeta(META);
-
-    if(showProgress){ $('#uploadProgress').value = 100; $('#progressText').textContent = '100%'; }
-    setTimeout(()=>{ if(showProgress) $('#progressContainer').style.display = 'none'; listFiles(); }, 400);
+    $('#uploadProgress').value = 100; $('#progressText').textContent = '100%';
+    setTimeout(()=>{ $('#progressContainer').style.display = 'none'; listFiles(); showToast(`Uploaded: ${file.name}`, 'success'); }, 400);
   }catch(err){
-    if(showProgress) $('#progressContainer').style.display = 'none';
+    $('#progressContainer').style.display = 'none';
     showUploadError('Upload failed: ' + (err.message || err));
     console.error(err);
   }
 }
 
-/* paste HTML modal functions */
+/* ---- NEW: paste HTML handling ----
+   - openPasteModal()
+   - savePastedHtml() -> converts text to Blob and calls uploadFile()
+   - preview via iframe
+*/
+
 function openPasteModal(){
   $('#pasteArea').value = '';
   $('#pasteFilename').value = '';
@@ -666,34 +680,45 @@ function openPasteModal(){
   $('#pasteModal').setAttribute('aria-hidden', 'false');
   $('#pasteArea').focus();
 }
+
 function closePasteModal(){
   $('#pasteModal').style.display = 'none';
   $('#pasteModal').setAttribute('aria-hidden', 'true');
   $('#pastePreviewFrame').style.display = 'none';
 }
+
+/* Save pasted HTML as file (calls existing uploadFile) */
 async function savePastedHtml(){
   const html = $('#pasteArea').value;
   let filename = ($('#pasteFilename').value || '').trim();
-  if(!html || html.trim() === ''){ alert('Paste some HTML first'); return; }
+  if(!html || html.trim() === ''){ showToast('Paste some HTML first', 'warn'); return; }
   if(!filename){
+    // try to detect title or use default
     const m = html.match(/<title>([^<]+)<\/title>/i);
     filename = m ? m[1].trim().replace(/[^\w\-\. ]/g,'_') + '.html' : `pasted-${Date.now()}.html`;
   }
   if(!filename.toLowerCase().endsWith('.html')) filename = filename + '.html';
+  // create blob
   const blob = new Blob([html], { type: 'text/html' });
+  // create File to match uploadFile expectations
   const file = new File([blob], filename, { type: 'text/html' });
+  // call uploadFile which handles UI
   await uploadFile(file);
   closePasteModal();
 }
+
+/* Preview pasted HTML in iframe */
 function previewPastedHtml(){
   const html = $('#pasteArea').value || '';
   const frame = $('#pastePreviewFrame');
   frame.style.display = html.trim() ? 'block' : 'none';
   if(!html.trim()){ frame.srcdoc = ''; return; }
+  // use srcdoc for quick preview
   frame.srcdoc = html;
 }
 
-/* ========= Core list / Delete / Rename + metadata features ========= */
+/* ---------- rest of app actions ---------- */
+
 async function listFiles(){
   const container = $('#fileList');
   container.innerHTML = '';
@@ -701,684 +726,22 @@ async function listFiles(){
   try{
     const { data: files, error } = await supabase.storage.from(BUCKET).list(FOLDER, { limit: 2000 });
     if(error) throw error;
-    if(!files || files.length === 0){ container.innerHTML = '<div class="empty" style="padding:20px;color:var(--muted)">No files uploaded yet.</div>'; updateSelectedCount(); return; }
+    if(!files || files.length === 0){ container.innerHTML = '<div class="empty" style="padding:20px;color:var(--muted)">No files uploaded yet.</div>'; return; }
 
-    // normalize & enrich with local metadata
-    files.forEach(f => {
-      const meta = META[f.name] || {};
-      f.meta = meta;
-      // if metadata has size but supabase doesn't provide size, keep meta
-      if(!f.size && meta.size) f.size = meta.size;
-      if(!meta.uploadedAt) { META[f.name] = META[f.name] || {}; META[f.name].uploadedAt = META[f.name].uploadedAt || new Date().toISOString(); }
-    });
-    saveMeta(META);
-
-    lastList = files.slice(); // save for operations
-
-    // filtering
-    const q = ($('#search').value || '').trim().toLowerCase();
-    const typeFilter = $('#typeFilter').value;
-    let filtered = files.filter(f => {
-      // basic type detection
-      const isImage = /\.(jpe?g|png|gif|webp|bmp|svg)$/i.test(f.name);
-      const isAudio = /\.(mp3|wav|ogg|m4a)$/i.test(f.name);
-      const isVideo = /\.(mp4|webm|mov|avi|mkv)$/i.test(f.name);
-      const isArchive = /\.(zip|rar|7z|tar|gz)$/i.test(f.name);
-      const isDoc = /\.(pdf|docx?|pptx?|xlsx?|txt|md|html?)$/i.test(f.name);
-
-      if(typeFilter === 'images' && !isImage) return false;
-      if(typeFilter === 'audio' && !isAudio) return false;
-      if(typeFilter === 'video' && !isVideo) return false;
-      if(typeFilter === 'archives' && !isArchive) return false;
-      if(typeFilter === 'documents' && !isDoc) return false;
-
-      if(!q) return true;
-      // search name + tags + metadata fields
-      if(f.name.toLowerCase().includes(q)) return true;
-      const m = META[f.name];
-      if(m && m.tags && m.tags.join(' ').toLowerCase().includes(q)) return true;
-      if(m && m.note && m.note.toLowerCase().includes(q)) return true;
-      return false;
-    });
-
-    // sorting
-    const sortVal = $('#sortSelect').value;
-    filtered.sort((a,b)=>{
-      if(sortVal === 'name_asc') return a.name.localeCompare(b.name,{numeric:true,sensitivity:'base'});
-      if(sortVal === 'name_desc') return b.name.localeCompare(a.name,{numeric:true,sensitivity:'base'});
-      if(sortVal === 'newest') return (META[b.name]?.uploadedAt || 0).localeCompare(META[a.name]?.uploadedAt || 0);
-      if(sortVal === 'oldest') return (META[a.name]?.uploadedAt || 0).localeCompare(META[b.name]?.uploadedAt || 0);
-      if(sortVal === 'size_desc') return (b.size||0) - (a.size||0);
-      if(sortVal === 'size_asc') return (a.size||0) - (b.size||0);
-      return 0;
-    });
-
-    // pagination
-    const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
+    files.sort((a,b)=>a.name.localeCompare(b.name,{numeric:true,sensitivity:'base'}));
+    const totalPages = Math.max(1, Math.ceil(files.length / itemsPerPage));
     if(currentPage > totalPages) currentPage = totalPages;
     const start = (currentPage-1)*itemsPerPage;
-    const pageFiles = filtered.slice(start, start + itemsPerPage);
+    const pageFiles = files.slice(start, start + itemsPerPage);
 
     for(const f of pageFiles){
       const filePath = `${FOLDER}${f.name}`;
       const { data } = supabase.storage.from(BUCKET).getPublicUrl(filePath);
       const url = data.publicUrl;
       const isImage = /\.(jpe?g|png|gif|webp|bmp|svg)$/i.test(f.name);
-      const meta = META[f.name] || {};
 
       const card = document.createElement('div');
       card.className = 'file-card';
-      if(selectedFiles.has(f.name)) card.classList.add('selected-file');
-      let tagsHtml = '';
-      if(SETTINGS.tagsOn && meta.tags && meta.tags.length) tagsHtml = `<div style="padding:4px 0">${meta.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>`;
-
-      const sizeHtml = SETTINGS.showFileSize ? `<div class="small-muted" style="font-size:12px">${fmtBytes(f.size||0)}</div>` : '';
-      const dateHtml = SETTINGS.showUploadDate ? `<div class="small-muted" style="font-size:12px">${(meta.uploadedAt ? new Date(meta.uploadedAt).toLocaleString() : '')}</div>` : '';
-
-      const previewInner = isImage ? `<img src="${url}" alt="${f.name}" class="preview">` : `<div style="font-size:36px;color:var(--muted)">📄</div>`;
-
       card.innerHTML = `
-        <div class="select-checkbox" title="Select" data-name="${f.name}" role="checkbox" aria-checked="${selectedFiles.has(f.name)}">${ selectedFiles.has(f.name) ? '✓' : '' }</div>
         <div class="preview-wrap">
-          ${previewInner}
-        </div>
-        <div class="meta">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="min-width:0">
-              <div class="file-name" title="${f.name}">${escapeHtml(f.name)}</div>
-              ${tagsHtml}
-            </div>
-            <div style="text-align:right">
-              ${sizeHtml}
-              ${dateHtml}
-            </div>
-          </div>
-          <div class="file-actions">
-            <button class="del" data-name="${f.name}">Delete</button>
-            <button class="rename" data-name="${f.name}">Rename</button>
-            <a class="download" href="${url}" target="_blank" rel="noopener">Download</a>
-          </div>
-        </div>
-      `;
-      // attach dataset for click actions (used by delegation)
-      card.dataset.name = f.name;
-      container.appendChild(card);
-
-      // inline rename if enabled: clicking name will open prompt / inline editor
-      if(SETTINGS.inlineRename){
-        const nameEl = card.querySelector('.file-name');
-        nameEl.style.cursor = 'pointer';
-        nameEl.addEventListener('click', (ev)=>{
-          ev.stopPropagation();
-          inlineRename(f.name, card);
-        });
-      }
-
-      // select checkbox handling
-      card.querySelector('.select-checkbox').addEventListener('click', (e)=>{
-        e.stopPropagation();
-        toggleSelectFile(f.name, e.currentTarget, card);
-      });
-
-      // preview image click opens modal
-      const img = card.querySelector('img.preview');
-      if(img){
-        img.addEventListener('click', ()=>{
-          $('#modalImg').src = img.src;
-          $('#imgModal').style.display = 'flex';
-        });
-      }
-    }
-
-    // pagination UI
-    if(totalPages > 1){
-      const pg = $('#pagination');
-      const prev = document.createElement('button'); prev.className='btn small secondary'; prev.textContent='‹'; prev.disabled = currentPage===1;
-      prev.addEventListener('click', ()=>{ currentPage = Math.max(1, currentPage-1); listFiles();});
-      pg.appendChild(prev);
-
-      // show a compact page selector when many pages
-      const range = generatePageRange(currentPage, totalPages, 7);
-      for(const i of range){
-        if(i === '...'){ const span = document.createElement('span'); span.textContent='...'; span.style.padding='6px'; pg.appendChild(span); continue; }
-        const b = document.createElement('button'); b.className='btn small'; b.textContent = i;
-        if(i===currentPage){ b.classList.add('active'); b.disabled = true; }
-        b.addEventListener('click', ()=>{ currentPage = i; listFiles(); });
-        pg.appendChild(b);
-      }
-
-      const next = document.createElement('button'); next.className='btn small secondary'; next.textContent='›'; next.disabled = currentPage===totalPages;
-      next.addEventListener('click', ()=>{ currentPage = Math.min(totalPages, currentPage+1); listFiles();});
-      pg.appendChild(next);
-    }
-
-    updateSelectedCount();
-  }catch(err){
-    container.innerHTML = '<div class="empty" style="padding:20px;color:var(--muted)">Failed to load files</div>';
-    console.error(err);
-  }
-}
-
-function generatePageRange(cur, total, maxButtons){
-  const out = [];
-  if(total <= maxButtons){
-    for(let i=1;i<=total;i++) out.push(i);
-    return out;
-  }
-  const half = Math.floor(maxButtons/2);
-  let start = Math.max(1, cur - half);
-  let end = Math.min(total, cur + half);
-  if(start === 1) end = Math.min(total, maxButtons);
-  if(end === total) start = Math.max(1, total - maxButtons + 1);
-  if(start > 1) out.push(1), out.push('...');
-  for(let i=start;i<=end;i++) out.push(i);
-  if(end < total) out.push('...'), out.push(total);
-  return out;
-}
-
-async function deleteFile(name){
-  if(SETTINGS.confirmDelete){
-    if(!confirm(`Delete "${name}"?`)) return;
-  }
-  try{
-    // attempt remove from supabase
-    const { error } = await supabase.storage.from(BUCKET).remove([`${FOLDER}${name}`]);
-    if(error) throw error;
-    // remove from local meta
-    delete META[name];
-    saveMeta(META);
-    selectedFiles.delete(name);
-    listFiles();
-  }catch(err){ alert('Delete failed: '+(err.message||err)); console.error(err); }
-}
-
-async function renameFile(oldName){
-  const newName = prompt('Enter new name for:', oldName);
-  if(!newName || newName === oldName) return;
-  try{
-    const { error } = await supabase.storage.from(BUCKET).move(`${FOLDER}${oldName}`, `${FOLDER}${newName}`);
-    if(error) throw error;
-    // update meta
-    META[newName] = META[oldName] || {};
-    META[newName].renamedFrom = oldName;
-    delete META[oldName];
-    saveMeta(META);
-    // update selection
-    if(selectedFiles.has(oldName)){ selectedFiles.delete(oldName); selectedFiles.add(newName); }
-    listFiles();
-  }catch(err){ alert('Rename failed: '+(err.message||err)); console.error(err); }
-}
-
-/* inline rename behavior */
-function inlineRename(oldName, card){
-  const newName = prompt('Rename file:', oldName);
-  if(!newName || newName === oldName) return;
-  renameFile(oldName);
-}
-
-/* selection helpers */
-function toggleSelectFile(name, checkboxEl, cardEl){
-  if(!multiSelectMode){
-    selectedFiles.clear();
-  }
-  if(selectedFiles.has(name)) { selectedFiles.delete(name); }
-  else selectedFiles.add(name);
-  // update visuals
-  updateSelectedUI();
-}
-function updateSelectedUI(){
-  // mark cards
-  $$('#fileList .file-card').forEach(card => {
-    if(selectedFiles.has(card.dataset.name)) card.classList.add('selected-file'), card.querySelector('.select-checkbox') && (card.querySelector('.select-checkbox').textContent='✓');
-    else card.classList.remove('selected-file'), card.querySelector('.select-checkbox') && (card.querySelector('.select-checkbox').textContent='');
-  });
-  updateSelectedCount();
-}
-function updateSelectedCount(){
-  $('#selectedCount').textContent = `${selectedFiles.size} selected`;
-}
-
-/* Bulk actions */
-async function deleteSelected(){
-  if(selectedFiles.size === 0) return alert('No files selected');
-  if(SETTINGS.confirmDelete && !confirm(`Delete ${selectedFiles.size} files?`)) return;
-  const toDelete = Array.from(selectedFiles);
-  try{
-    // supabase remove accepts array of file paths
-    const paths = toDelete.map(n => `${FOLDER}${n}`);
-    const { error } = await supabase.storage.from(BUCKET).remove(paths);
-    if(error) throw error;
-    // remove meta and clear selection
-    for(const n of toDelete){ delete META[n]; selectedFiles.delete(n); }
-    saveMeta(META);
-    listFiles();
-  }catch(err){ alert('Bulk delete failed: '+(err.message||err)); console.error(err); }
-}
-
-function downloadSelected(){
-  if(selectedFiles.size === 0) return alert('No files selected');
-  // open each in new tab (simple approach)
-  for(const name of selectedFiles){
-    const url = supabase.storage.from(BUCKET).getPublicUrl(`${FOLDER}${name}`).data.publicUrl;
-    window.open(url, '_blank');
-  }
-}
-
-/* Metadata: tags + notes UI (in details modal) */
-function openDetails(name){
-  const meta = META[name] || {};
-  const content = $('#detailsContent');
-  content.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div style="font-weight:700">${escapeHtml(name)}</div>
-      <div class="muted-small">${fmtBytes(meta.size||0)}</div>
-    </div>
-    <div style="margin-top:8px"><strong>Tags</strong></div>
-    <div id="metaTags" style="margin-top:6px">${(meta.tags || []).map(t=>`<span class="tag" data-tag="${t}">${escapeHtml(t)} <button class="remTag" data-tag="${t}" style="background:none;border:none;color:inherit;cursor:pointer">×</button></span>`).join(' ')}</div>
-    <div style="margin-top:8px;display:flex;gap:6px">
-      <input id="newTagInput" type="text" placeholder="new tag" style="flex:1;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)">
-      <button id="addTagBtn" class="btn secondary">Add</button>
-    </div>
-    <div style="margin-top:8px"><strong>Note</strong></div>
-    <textarea id="metaNote" style="width:100%;min-height:80px;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)">${escapeHtml(meta.note||'')}</textarea>
-    <div style="margin-top:8px;display:flex;gap:8px">
-      <button id="saveMetaBtn" class="btn primary">Save</button>
-      <button id="closeDetails2" class="btn ghost">Close</button>
-    </div>
-  `;
-  $('#detailsModal').style.display = 'block';
-  $('#detailsModal').setAttribute('aria-hidden','false');
-
-  // wire tag add/remove/save
-  $('#addTagBtn').addEventListener('click', ()=>{
-    const nv = $('#newTagInput').value.trim();
-    if(!nv) return;
-    META[name] = META[name] || {};
-    META[name].tags = Array.from(new Set([...(META[name].tags||[]), nv]));
-    saveMeta(META);
-    openDetails(name); // refresh
-  });
-  $$('#metaTags .remTag').forEach(btn=> btn.addEventListener('click', (e)=>{
-    const t = e.currentTarget.dataset.tag;
-    META[name].tags = (META[name].tags||[]).filter(x=>x!==t);
-    saveMeta(META);
-    openDetails(name);
-  }));
-  $('#saveMetaBtn').addEventListener('click', ()=>{
-    META[name] = META[name] || {};
-    META[name].note = $('#metaNote').value;
-    saveMeta(META);
-    alert('Saved');
-    $('#detailsModal').style.display = 'none';
-  });
-  $('#closeDetails2').addEventListener('click', ()=> $('#detailsModal').style.display = 'none');
-}
-
-/* small utility to escape HTML (for file names) */
-function escapeHtml(s){ return String(s).replace(/[&<>'"]/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'})[m]; }); }
-
-/* ========= UI wiring ========= */
-function setupUI(){
-  // login / demo
-  $('#loginBtn').addEventListener('click', ()=> {
-    const val = $('#viewId').value.trim();
-    if(val === VIEW_ID){ sessionStorage.setItem('loggedIn','true'); $('#loginPage').style.display='none'; $('#appPage').style.display='block'; listFiles(); }
-    else showLoginError('Incorrect ID');
-  });
-  $('#demoLogin').addEventListener('click', ()=> {
-    sessionStorage.setItem('loggedIn','demo'); $('#loginPage').style.display='none'; $('#appPage').style.display='block'; listFiles();
-  });
-
-  // file input
-  $('#chooseBtn').addEventListener('click', ()=> $('#fileInput').click());
-  $('#uploadBtn').addEventListener('click', ()=> {
-    const files = $('#fileInput').files;
-    if(files && files.length){
-      (async ()=>{ for(const f of files) await uploadFile(f); })();
-    } else $('#fileInput').click();
-  });
-  $('#fileInput').addEventListener('change', (e)=> { const fl = e.target.files; if(fl && fl.length){ (async ()=>{ for(const f of fl) await uploadFile(f); })(); } });
-
-  // refresh
-  $('#refreshBtn').addEventListener('click', ()=> listFiles());
-
-  // settings open/close
-  $('#settingsBtn').addEventListener('click', ()=> {
-    $('#settingsPanel').classList.toggle('open');
-    $('#settingsPanel').setAttribute('aria-hidden', $('#settingsPanel').classList.contains('open') ? 'false' : 'true');
-    populateSettingsUI(SETTINGS);
-  });
-  $('#closeSettings').addEventListener('click', ()=> { $('#settingsPanel').classList.remove('open'); });
-
-  // logout
-  $('#logoutBtn').addEventListener('click', ()=> {
-    sessionStorage.removeItem('loggedIn'); $('#appPage').style.display='none'; $('#loginPage').style.display='flex'; $('#viewId').value='';
-  });
-
-  // paste controls
-  $('#pasteHtmlBtn').addEventListener('click', ()=> openPasteModal());
-  $('#closePaste').addEventListener('click', ()=> closePasteModal());
-  $('#savePaste').addEventListener('click', ()=> savePastedHtml());
-  $('#previewPaste').addEventListener('click', ()=> previewPastedHtml());
-
-  // theme option click
-  document.querySelectorAll('.theme-option').forEach(el=>{
-    el.addEventListener('click', ()=>{ document.querySelectorAll('.theme-option').forEach(x=>x.classList.remove('active')); el.classList.add('active'); SETTINGS.theme = el.dataset.theme; applySettings(SETTINGS); });
-  });
-
-  // accent color pickers
-  $('#accentColor').addEventListener('input', (e)=> { SETTINGS.accent = e.target.value; applySettings(SETTINGS); });
-  $('#accentColor2').addEventListener('input', (e)=> { SETTINGS.accent2 = e.target.value; applySettings(SETTINGS); });
-
-  // radius, glow, bg mode, particles, density, font
-  $('#toggleRadius').addEventListener('change', (e)=> { SETTINGS.radiusOn = e.target.checked; applySettings(SETTINGS); });
-  $('#toggleGlow').addEventListener('change', (e)=> { SETTINGS.glowOn = e.target.checked; applySettings(SETTINGS); });
-  $('#bgMode').addEventListener('change', (e)=> { SETTINGS.bgMode = e.target.value; applySettings(SETTINGS); });
-  $('#toggleParticles').addEventListener('change', (e)=> { SETTINGS.particlesOn = e.target.checked; applySettings(SETTINGS); });
-  $('#particleRange').addEventListener('input', (e)=> { SETTINGS.particleDensity = parseInt(e.target.value,10); applySettings(SETTINGS); });
-  $('#fontSelect').addEventListener('change', (e)=> { SETTINGS.font = e.target.value; applySettings(SETTINGS); });
-
-  // settings: pageSize & viewMode & toggles
-  $('#pageSizeSelect').addEventListener('change', (e)=> { SETTINGS.pageSize = parseInt(e.target.value,10); SETTINGS.pageSize = SETTINGS.pageSize; itemsPerPage = SETTINGS.pageSize; listFiles(); });
-  $('#viewModeSelect').addEventListener('change', (e)=> { SETTINGS.viewMode = e.target.value; applySettings(SETTINGS); listFiles(); });
-  $('#toggleInlineRename').addEventListener('change', (e)=> { SETTINGS.inlineRename = e.target.checked; saveSettings(SETTINGS); });
-  $('#toggleTags').addEventListener('change', (e)=> { SETTINGS.tagsOn = e.target.checked; saveSettings(SETTINGS); listFiles(); });
-  $('#showFileSize').addEventListener('change', (e)=> { SETTINGS.showFileSize = e.target.checked; saveSettings(SETTINGS); listFiles(); });
-  $('#showUploadDate').addEventListener('change', (e)=> { SETTINGS.showUploadDate = e.target.checked; saveSettings(SETTINGS); listFiles(); });
-  $('#toggleAutoRefresh').addEventListener('change', (e)=> { SETTINGS.autoRefresh = e.target.checked; saveSettings(SETTINGS); applySettings(SETTINGS); });
-  $('#autoRefreshInterval').addEventListener('change', (e)=> { const v = parseInt(e.target.value,10)||30; SETTINGS.autoRefreshInterval = v; saveSettings(SETTINGS); applySettings(SETTINGS); });
-  $('#toggleShortcuts').addEventListener('change', (e)=> { SETTINGS.shortcutsOn = e.target.checked; saveSettings(SETTINGS); });
-  $('#toggleContextMenu').addEventListener('change', (e)=> { SETTINGS.contextMenuOn = e.target.checked; saveSettings(SETTINGS); });
-  $('#multiSelectToggle').addEventListener('change', (e)=> { SETTINGS.multiSelectOn = e.target.checked; multiSelectMode = e.target.checked; saveSettings(SETTINGS); });
-
-  // save/export/import settings
-  $('#saveSettings').addEventListener('click', ()=> { saveSettings(SETTINGS); alert('Settings saved'); $('#settingsPanel').classList.remove('open'); });
-  $('#exportSettings').addEventListener('click', ()=> { const blob = new Blob([JSON.stringify(SETTINGS, null, 2)], { type:'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'my_storage_settings.json'; a.click(); URL.revokeObjectURL(url); });
-  $('#importSettings').addEventListener('click', ()=> {
-    const input = document.createElement('input'); input.type = 'file'; input.accept = 'application/json';
-    input.onchange = (ev)=> {
-      const f = ev.target.files[0]; if(!f) return;
-      const reader = new FileReader();
-      reader.onload = ()=> {
-        try{ const j = JSON.parse(reader.result); SETTINGS = {...defaultSettings, ...j}; saveSettings(SETTINGS); applySettings(SETTINGS); populateSettingsUI(SETTINGS); alert('Settings imported'); }
-        catch(e){ alert('Import failed'); console.error(e); }
-      };
-      reader.readAsText(f);
-    };
-    input.click();
-  });
-
-  // demo populate
-  $('#demoPopulate').addEventListener('click', ()=> demoPopulate());
-
-  // reset settings
-  $('#resetSettings').addEventListener('click', ()=> {
-    if(!confirm('Reset to default settings?')) return;
-    SETTINGS = {...defaultSettings};
-    saveSettings(SETTINGS);
-    applySettings(SETTINGS);
-    populateSettingsUI(SETTINGS);
-    alert('Settings reset');
-  });
-
-  // export/import metadata
-  $('#exportMeta').addEventListener('click', ()=> {
-    const blob = new Blob([JSON.stringify(META, null, 2)], { type:'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'my_storage_meta.json'; a.click(); URL.revokeObjectURL(url);
-  });
-  $('#importMeta').addEventListener('click', ()=> {
-    const input = document.createElement('input'); input.type = 'file'; input.accept = 'application/json';
-    input.onchange = (ev)=> {
-      const f = ev.target.files[0]; if(!f) return;
-      const reader = new FileReader();
-      reader.onload = ()=> {
-        try{ const j = JSON.parse(reader.result); META = {...META, ...j}; saveMeta(META); alert('Metadata imported'); listFiles(); }
-        catch(e){ alert('Import failed'); console.error(e); }
-      };
-      reader.readAsText(f);
-    };
-    input.click();
-  });
-
-  // selection helpers: select all / clear
-  $('#selectAllBtn').addEventListener('click', ()=>{
-    // select all visible items in current page
-    const visible = $$('#fileList .file-card').map(c=>c.dataset.name);
-    visible.forEach(n=> selectedFiles.add(n));
-    updateSelectedUI();
-  });
-  $('#clearSelectionBtn').addEventListener('click', ()=>{
-    selectedFiles.clear(); updateSelectedUI();
-  });
-  $('#bulkDeleteBtn').addEventListener('click', ()=> deleteSelected());
-  $('#downloadSelected').addEventListener('click', ()=> downloadSelected());
-
-  // drag-drop toggle and zone wiring
-  let dropShown = false;
-  $('#dropZoneToggle').addEventListener('click', ()=> {
-    dropShown = !dropShown;
-    $('#dropZone').style.display = dropShown ? 'block' : 'none';
-  });
-  const dz = $('#dropZone');
-  ['dragenter','dragover'].forEach(ev => { dz.addEventListener(ev, (e)=> { e.preventDefault(); dz.style.opacity = '1'; }); });
-  ['dragleave','drop'].forEach(ev => { dz.addEventListener(ev, (e)=> { e.preventDefault(); dz.style.opacity = '0.8'; }); });
-  dz.addEventListener('drop', (e)=> {
-    e.preventDefault();
-    const dt = e.dataTransfer;
-    if(dt && dt.files && dt.files.length){
-      (async ()=> {
-        for(const f of dt.files) await uploadFile(f);
-      })();
-    }
-  });
-
-  // image modal close
-  $('#closeImg').addEventListener('click', ()=> $('#imgModal').style.display = 'none');
-
-  // delegation for fileList: delete/rename/preview, open details on right-click or double-click
-  $('#fileList').addEventListener('click', (e) => {
-    const del = e.target.closest('button.del');
-    if(del){ e.stopPropagation(); deleteFile(del.dataset.name); return; }
-    const ren = e.target.closest('button.rename');
-    if(ren){ e.stopPropagation(); renameFile(ren.dataset.name); return; }
-    const card = e.target.closest('.file-card');
-    if(card && e.detail === 2){ // double-click opens details
-      openDetails(card.dataset.name);
-    }
-  });
-
-  // context menu
-  window.addEventListener('contextmenu', (e)=>{
-    if(!SETTINGS.contextMenuOn) return;
-    const card = e.target.closest('.file-card');
-    if(card){
-      e.preventDefault();
-      const menu = $('#ctxMenu');
-      menu.innerHTML = `<div style="padding:6px;min-width:160px">
-        <div class="muted-small" style="margin-bottom:6px">${escapeHtml(card.dataset.name)}</div>
-        <button id="ctxDownload" class="btn small" style="width:100%;margin-bottom:6px">Download</button>
-        <button id="ctxRename" class="btn small" style="width:100%;margin-bottom:6px">Rename</button>
-        <button id="ctxDetails" class="btn small" style="width:100%;margin-bottom:6px">Details</button>
-        <button id="ctxDelete" class="btn small" style="width:100%">Delete</button>
-      </div>`;
-      menu.style.left = e.pageX + 'px';
-      menu.style.top = e.pageY + 'px';
-      menu.style.display = 'block';
-      menu.setAttribute('aria-hidden','false');
-
-      // wire actions
-      $('#ctxDownload').addEventListener('click', ()=> {
-        window.open(supabase.storage.from(BUCKET).getPublicUrl(`${FOLDER}${card.dataset.name}`).data.publicUrl,'_blank');
-        menu.style.display='none';
-      });
-      $('#ctxRename').addEventListener('click', ()=> { menu.style.display='none'; renameFile(card.dataset.name); });
-      $('#ctxDetails').addEventListener('click', ()=> { menu.style.display='none'; openDetails(card.dataset.name); });
-      $('#ctxDelete').addEventListener('click', ()=> { menu.style.display='none'; deleteFile(card.dataset.name); });
-    } else {
-      // hide menu if not on a card
-      $('#ctxMenu').style.display = 'none';
-    }
-  });
-  document.addEventListener('click', ()=> { $('#ctxMenu').style.display = 'none'; });
-
-  // keyboard shortcuts
-  document.addEventListener('keydown', (e)=>{
-    if(!SETTINGS.shortcutsOn) return;
-    if(e.key === 'a' && (e.metaKey || e.ctrlKey)){ e.preventDefault(); // Ctrl/Cmd + A -> toggle select all visible
-      const visible = $$('#fileList .file-card').map(c=>c.dataset.name);
-      visible.forEach(n=> selectedFiles.add(n)); updateSelectedUI();
-    }
-    if(e.key === 'Escape'){ selectedFiles.clear(); updateSelectedUI(); $('#ctxMenu').style.display='none'; $('#imgModal').style.display='none'; }
-    if(e.key === 'Delete'){ if(selectedFiles.size) deleteSelected(); }
-    if(e.key === 'r' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); listFiles(); }
-  });
-
-  // search debounce
-  let searchTimer = null;
-  $('#search').addEventListener('input', (e)=>{
-    if(searchTimer) clearTimeout(searchTimer);
-    searchTimer = setTimeout(()=> { currentPage = 1; listFiles(); }, 240);
-  });
-
-  // sort / filter changes
-  $('#sortSelect').addEventListener('change', ()=> listFiles());
-  $('#typeFilter').addEventListener('change', ()=> listFiles());
-
-  // details close
-  $('#closeDetails').addEventListener('click', ()=> $('#detailsModal').style.display = 'none');
-
-  // ensure active theme option shows
-  document.querySelectorAll('.theme-option').forEach(el=> el.classList.toggle('active', el.dataset.theme === SETTINGS.theme));
-}
-
-/* Demo population: creates small text files as demo (and uploads them) */
-async function demoPopulate(){
-  if(!confirm('Populate demo files? This will upload small demo text files to your bucket.')) return;
-  const names = [];
-  for(let i=1;i<=10;i++){
-    names.push(`demo-file-${i}.txt`);
-  }
-  for(const n of names){
-    const blob = new Blob([`Demo file ${n}\nCreated: ${new Date().toISOString()}`], { type: 'text/plain' });
-    const file = new File([blob], n, { type: 'text/plain' });
-    await uploadFile(file, false);
-  }
-  alert('Demo files uploaded (10).');
-  listFiles();
-}
-
-/* helper: small escape for attribute usage is already done by escapeHtml */
-
-/* init UI & app */
-setupUI();
-const logged = sessionStorage.getItem('loggedIn') === 'true' || sessionStorage.getItem('loggedIn') === 'demo';
-if(logged){ $('#loginPage').style.display='none'; $('#appPage').style.display='block'; listFiles(); }
-else { $('#loginPage').style.display='flex'; $('#appPage').style.display='none'; }
-
-SETTINGS = {...defaultSettings, ...SETTINGS};
-populateSettingsUI(SETTINGS);
-applySettings(SETTINGS);
-
-/* Save settings on unload */
-window.addEventListener('beforeunload', ()=> { saveSettings(SETTINGS); saveMeta(META); });
-
-/* expose for debugging */
-window._myStorage = { SETTINGS, listFiles, uploadFile, META, saveMeta, applySettings };
-
-</script>
-
-<!-- background controllers (unchanged) -->
-<script>
-/* Particle & Waves controllers (exposed as window.Particles and window.Waves) */
-(function(){
-  const canvas = document.getElementById('bgCanvas');
-  const ctx = canvas.getContext('2d', { alpha:true });
-  let DPR = Math.max(1, window.devicePixelRatio || 1);
-  let W = innerWidth, H = innerHeight;
-  let pts = [];
-  let density = parseInt(document.getElementById('particleRange')?.value || 120,10) || 120;
-  let running = true;
-  let mouse = { x:-9999, y:-9999, active:false };
-
-  function resize(){ W = innerWidth; H = innerHeight; canvas.width = W * DPR; canvas.height = H * DPR; canvas.style.width = W + 'px'; canvas.style.height = H + 'px'; ctx.setTransform(DPR,0,0,DPR,0,0); createPoints(); }
-  function rand(a,b){ return Math.random()*(b-a)+a; }
-  function createPoints(){
-    pts = [];
-    const base = Math.max(30, Math.min(420, Math.round(density * ((W*H)/(1366*768)))));
-    for(let i=0;i<base;i++) pts.push({ x:rand(0,W), y:rand(0,H), vx:rand(-0.35,0.35), vy:rand(-0.35,0.35), r:rand(0.8,1.8) });
-  }
-
-  function step(){
-    if(!running){ requestAnimationFrame(step); return; }
-    ctx.clearRect(0,0,W,H);
-    for(const p of pts){ p.x += p.vx; p.y += p.vy; if(p.x < -30) p.x = W + 30; if(p.x > W + 30) p.x = -30; if(p.y < -30) p.y = H + 30; if(p.y > H + 30) p.y = -30; }
-    for(let i=0;i<pts.length;i++){
-      for(let j=i+1;j<pts.length;j++){
-        const a=pts[i], b=pts[j]; const dx=a.x-b.x, dy=a.y-b.y; const d=Math.sqrt(dx*dx+dy*dy);
-        if(d < 140){
-          let alpha = 0.22*(1 - d/140);
-          if(mouse.active){
-            const mx=(a.x+b.x)/2 - mouse.x, my=(a.y+b.y)/2 - mouse.y; const md=Math.sqrt(mx*mx+my*my);
-            if(md < 220) alpha += (1 - md/220)*0.35;
-          }
-          ctx.strokeStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
-          ctx.lineWidth = 0.9; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
-        }
-      }
-    }
-    for(const p of pts){
-      let size = p.r;
-      if(mouse.active){
-        const dx=p.x-mouse.x, dy=p.y-mouse.y; const d=Math.sqrt(dx*dx+dy*dy);
-        if(d < 200){ const push=(200-d)/200; p.x += (dx/d||0)*push*1.8; p.y += (dy/d||0)*push*1.8; size = p.r + push*1.6; }
-      }
-      ctx.beginPath(); ctx.fillStyle = `rgba(255,255,255,${0.85 - size*0.25})`; ctx.arc(p.x,p.y,size,0,Math.PI*2); ctx.fill();
-    }
-    requestAnimationFrame(step);
-  }
-
-  window.addEventListener('resize', resize);
-  window.addEventListener('mousemove', (e)=>{ mouse.x = e.clientX; mouse.y = e.clientY; mouse.active = true; });
-  window.addEventListener('mouseout', ()=>{ mouse.active = false; mouse.x = -9999; mouse.y = -9999; });
-
-  window.Particles = {
-    start(){ running = true; },
-    stop(){ running = false; ctx.clearRect(0,0,W,H); },
-    setDensity(n){ density = n; createPoints(); },
-    getDensity(){ return density; }
-  };
-
-  // simple waves controller
-  let wavesRunning = false, waveT = 0;
-  function wavesStep(){
-    if(!wavesRunning){ requestAnimationFrame(wavesStep); return; }
-    ctx.clearRect(0,0,W,H);
-    const c = getComputedStyle(document.documentElement).getPropertyValue('--accent')?.trim() || '#ff4c4c';
-    const rgb = hexToRgb(c) || {r:255,g:76,b:76};
-    const g = ctx.createLinearGradient(0,0,W,H);
-    g.addColorStop(0, `rgba(${rgb.r},${rgb.g},${rgb.b},0.06)`);
-    g.addColorStop(1, `rgba(255,255,255,0.01)`);
-    ctx.fillStyle = g;
-    const amplitude = Math.min(80, Math.max(12, (W+H)/220));
-    ctx.beginPath();
-    for(let x=0;x<=W;x+=20){
-      const y = H/2 + Math.sin((x*0.02) + waveT*0.01) * amplitude;
-      if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-    }
-    ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath(); ctx.fill();
-    waveT += 1;
-    requestAnimationFrame(wavesStep);
-  }
-  function hexToRgb(hex){ hex=hex.replace('#',''); if(hex.length===3) hex=hex.split('').map(c=>c+c).join(''); const n=parseInt(hex,16); return {r:(n>>16)&255,g:(n>>8)&255,b:n&255}; }
-
-  window.Waves = {
-    start(){ wavesRunning = true; waveT = 0; },
-    stop(){ wavesRunning = false; ctx.clearRect(0,0,W,H); }
-  };
-
-  resize(); step();
-})();
-</script>
-</body>
-</html>
+          ${ isImage ? `<img src="${url}" alt="${f.name}" class="preview">` : `<div style="font-size:36px
