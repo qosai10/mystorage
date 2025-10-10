@@ -665,7 +665,13 @@ async function uploadFile(file){
     console.error(err);
   }
 }
-
+/* UI wiring */
+function setupUI(){
+  $('#loginBtn').addEventListener('click', ()=> {
+    const val = $('#viewId').value.trim();
+    if(val === VIEW_ID){ sessionStorage.setItem('loggedIn','true'); $('#loginPage').style.display='none'; $('#appPage').style.display='block'; listFiles(); }
+    else showLoginError('Incorrect ID');
+  });
 /* ---- NEW: paste HTML handling ----
    - openPasteModal()
    - savePastedHtml() -> converts text to Blob and calls uploadFile()
@@ -745,42 +751,3 @@ async function listFiles(){
       card.innerHTML = `
         <div class="preview-wrap">
           ${ isImage ? `<img src="${url}" alt="${f.name}" class="preview">` : `<div style="font-size:36px
-
-          /* ----------------------
-   LOGIN LOGIC FIX
-   ---------------------- */
-const loginBtn = document.getElementById('loginBtn');
-const loginPage = document.getElementById('loginPage');
-const appPage = document.getElementById('appPage');
-const loginError = document.getElementById('loginError');
-const viewIdInput = document.getElementById('viewId');
-
-loginBtn.addEventListener('click', async () => {
-  const enteredId = viewIdInput.value.trim();
-  if (!enteredId) {
-    loginError.textContent = 'Please enter a View ID';
-    return;
-  }
-
-  // Replace this with your real check if needed
-  if (enteredId === VIEW_ID) {
-    // Save login state
-    localStorage.setItem('loggedIn', 'true');
-    loginPage.style.display = 'none';
-    appPage.style.display = 'block';
-    loginError.textContent = '';
-    showToast('Login successful!', 'success');
-  } else {
-    loginError.textContent = 'Invalid View ID';
-    showToast('Invalid View ID', 'error');
-  }
-});
-
-// Auto-login if user already logged in
-window.addEventListener('load', () => {
-  if (localStorage.getItem('loggedIn') === 'true') {
-    loginPage.style.display = 'none';
-    appPage.style.display = 'block';
-  }
-});
-
