@@ -32,82 +32,77 @@
         <input id="q" type="search" placeholder="Type a word (e.g. cat, mountains, pizza) and press Enter or Search" autocomplete="off" />
         <button id="go">Search</button>
       </div>
-      <div class="note">This demo uses unsplash source images (no API key). Images are fetched from <code>https://source.unsplash.com</code> and may vary each request.</div>
+      <div class="note">
+        This demo loads images via DuckDuckGo’s public image API (no API key required).
+      </div>
     </header>
 
     <section id="results" class="grid" aria-live="polite">
-      <!-- images inserted here -->
+      <!-- images will appear here -->
     </section>
 
     <footer>
-      Tip: To host on GitHub Pages, add this file as <code>index.html</code> in a repository and enable Pages in repository settings.
+      Hosted with ❤️ on <a href="https://github.com/qosai10/testing" target="_blank">GitHub Pages</a>.
     </footer>
   </main>
 
   <script>
-    const input = document.getElementById('q');
-    const btn = document.getElementById('go');
-    const results = document.getElementById('results');
+  const input = document.getElementById('q');
+  const btn = document.getElementById('go');
+  const results = document.getElementById('results');
 
-    // Build a URL for Unsplash Source with a signature so we get different images
-    function unsplashUrl(query, sig){
-      // size 800x600 keeps images decently large; change if you want smaller
-      return `https://source.unsplash.com/800x600/?${encodeURIComponent(query)}&sig=${sig}`;
-    }
+  function clearResults() { results.innerHTML = ''; }
 
-    function clearResults(){ results.innerHTML = ''; }
+  function makeCard(src, alt, idx){
+    const card = document.createElement('div');
+    card.className = 'card';
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = alt;
+    img.loading = 'lazy';
+    img.onerror = () => {
+      img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="%23f0f2f5"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%239aa4b2" font-family="Arial,Helvetica,sans-serif" font-size="20">Image not available</text></svg>';
+    };
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    meta.textContent = `Result ${idx + 1}`;
+    card.appendChild(img);
+    card.appendChild(meta);
+    return card;
+  }
 
-    function makeCard(src, alt, idx){
-      const card = document.createElement('div');
-      card.className = 'card';
-      const img = document.createElement('img');
-      img.src = src;
-      img.alt = alt;
-      img.loading = 'lazy';
-      img.onerror = () => {
-        // Replace broken image with a small placeholder SVG
-        img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="%23f0f2f5"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%239aa4b2" font-family="Arial,Helvetica,sans-serif" font-size="20">Image not available</text></svg>';
-      };
-      const meta = document.createElement('div');
-      meta.className = 'meta';
-      meta.textContent = `Result ${idx + 1}`;
-      card.appendChild(img);
-      card.appendChild(meta);
-      return card;
-    }
+  async function search(){
+    const q = input.value.trim();
+    if(!q) return;
+    btn.disabled = true;
+    btn.textContent = 'Searching...';
+    clearResults();
 
-    async function search(){
-      const q = input.value.trim();
-      if(!q) return; 
-      btn.disabled = true;
-      btn.textContent = 'Searching...';
-      clearResults();
+    try {
+      const url = `https://duckduckgo.com/i.js?l=us-en&o=json&q=${encodeURIComponent(q)}`;
+      const res = await fetch(url);
+      const data = await res.json();
 
-      // We'll request 4 distinct images by varying the &sig parameter
-      const num = 4;
-      for(let i=0;i<num;i++){
-        const url = unsplashUrl(q, i+1);
-        const card = makeCard(url, `${q} image ${i+1}`, i);
-        results.appendChild(card);
+      if (data && data.results && data.results.length) {
+        for (let i = 0; i < 4 && i < data.results.length; i++) {
+          const imgSrc = data.results[i].image;
+          const card = makeCard(imgSrc, `${q} image ${i+1}`, i);
+          results.appendChild(card);
+        }
+      } else {
+        results.innerHTML = "<p>No images found. Try another word.</p>";
       }
-
-      // restore button after a short delay so images have time to start loading
-      setTimeout(()=>{
-        btn.disabled = false;
-        btn.textContent = 'Search';
-      }, 700);
+    } catch (err) {
+      results.innerHTML = "<p>Could not load images. Try again later.</p>";
+      console.error(err);
     }
 
-    // Trigger search on button click or Enter key
-    btn.addEventListener('click', search);
-    input.addEventListener('keydown', (e)=>{
-      if(e.key === 'Enter') search();
-    });
+    btn.disabled = false;
+    btn.textContent = 'Search';
+  }
 
-    // Optional: seed with a sample
-    document.addEventListener('DOMContentLoaded', ()=>{
-      input.value = '';
-    });
+  btn.addEventListener('click', search);
+  input.addEventListener('keydown', (e) => { if(e.key === 'Enter') search(); });
   </script>
 </body>
 </html>
