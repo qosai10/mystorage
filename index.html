@@ -260,12 +260,12 @@
               <option value="archives">Archives</option>
             </select>
             <select id="sortSelect" class="filter-select" title="Sort by" aria-label="Sort files">
-              <option value="name_asc">Name </option>
-              <option value="name_desc">Name </option>
+              <option value="name_asc">Name ↑</option>
+              <option value="name_desc">Name ↓</option>
               <option value="newest">Newest</option>
               <option value="oldest">Oldest</option>
-              <option value="size_desc">Size â†“</option>
-              <option value="size_asc">Size </option>
+              <option value="size_desc">Size ↓</option>
+              <option value="size_asc">Size ↑</option>
             </select>
 
             <div style="width:12px"></div>
@@ -774,10 +774,10 @@ async function listFiles(){
       const sizeHtml = SETTINGS.showFileSize ? `<div class="small-muted" style="font-size:12px">${fmtBytes(f.size||0)}</div>` : '';
       const dateHtml = SETTINGS.showUploadDate ? `<div class="small-muted" style="font-size:12px">${(meta.uploadedAt ? new Date(meta.uploadedAt).toLocaleString() : '')}</div>` : '';
 
-      const previewInner = isImage ? `<img src="${url}" alt="${f.name}" class="preview">` : `<div style="font-size:36px;color:var(--muted)"></div>`;
+      const previewInner = isImage ? `<img src="${url}" alt="${f.name}" class="preview">` : `<div style="font-size:36px;color:var(--muted)">File</div>`;
 
       card.innerHTML = `
-        <div class="select-checkbox" title="Select" data-name="${f.name}" role="checkbox" aria-checked="${selectedFiles.has(f.name)}">${ selectedFiles.has(f.name) ? 'âœ“' : '' }</div>
+        <div class="select-checkbox" title="Select" data-name="${f.name}" role="checkbox" aria-checked="${selectedFiles.has(f.name)}">${ selectedFiles.has(f.name) ? '✓' : '' }</div>
         <div class="preview-wrap">
           ${previewInner}
         </div>
@@ -832,7 +832,7 @@ async function listFiles(){
     // pagination UI
     if(totalPages > 1){
       const pg = $('#pagination');
-      const prev = document.createElement('button'); prev.className='btn small secondary'; prev.textContent='¹'; prev.disabled = currentPage===1;
+      const prev = document.createElement('button'); prev.className='btn small secondary'; prev.textContent='‹'; prev.disabled = currentPage===1;
       prev.addEventListener('click', ()=>{ currentPage = Math.max(1, currentPage-1); listFiles();});
       pg.appendChild(prev);
 
@@ -846,7 +846,7 @@ async function listFiles(){
         pg.appendChild(b);
       }
 
-      const next = document.createElement('button'); next.className='btn small secondary'; next.textContent=''; next.disabled = currentPage===totalPages;
+      const next = document.createElement('button'); next.className='btn small secondary'; next.textContent='›'; next.disabled = currentPage===totalPages;
       next.addEventListener('click', ()=>{ currentPage = Math.min(totalPages, currentPage+1); listFiles();});
       pg.appendChild(next);
     }
@@ -928,7 +928,7 @@ function toggleSelectFile(name, checkboxEl, cardEl){
 function updateSelectedUI(){
   // mark cards
   $$('#fileList .file-card').forEach(card => {
-    if(selectedFiles.has(card.dataset.name)) card.classList.add('selected-file'), card.querySelector('.select-checkbox') && (card.querySelector('.select-checkbox').textContent='âœ“');
+    if(selectedFiles.has(card.dataset.name)) card.classList.add('selected-file'), card.querySelector('.select-checkbox') && (card.querySelector('.select-checkbox').textContent='✓');
     else card.classList.remove('selected-file'), card.querySelector('.select-checkbox') && (card.querySelector('.select-checkbox').textContent='');
   });
   updateSelectedCount();
@@ -973,7 +973,7 @@ function openDetails(name){
       <div class="muted-small">${fmtBytes(meta.size||0)}</div>
     </div>
     <div style="margin-top:8px"><strong>Tags</strong></div>
-    <div id="metaTags" style="margin-top:6px">${(meta.tags || []).map(t=>`<span class="tag" data-tag="${t}">${escapeHtml(t)} <button class="remTag" data-tag="${t}" style="background:none;border:none;color:inherit;cursor:pointer">Ã—</button></span>`).join(' ')}</div>
+    <div id="metaTags" style="margin-top:6px">${(meta.tags || []).map(t=>`<span class="tag" data-tag="${t}">${escapeHtml(t)} <button class="remTag" data-tag="${t}" style="background:none;border:none;color:inherit;cursor:pointer">×</button></span>`).join(' ')}</div>
     <div style="margin-top:8px;display:flex;gap:6px">
       <input id="newTagInput" type="text" placeholder="new tag" style="flex:1;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)">
       <button id="addTagBtn" class="btn secondary">Add</button>
