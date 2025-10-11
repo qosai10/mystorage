@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>My Storage â€” Final Custom (Paste HTML enabled)</title>
+<title>Storage Backend</title>
 
 <!-- Single-file app: everything inline -->
 <style>
@@ -260,12 +260,12 @@
               <option value="archives">Archives</option>
             </select>
             <select id="sortSelect" class="filter-select" title="Sort by" aria-label="Sort files">
-              <option value="name_asc">Name â†‘</option>
-              <option value="name_desc">Name â†“</option>
+              <option value="name_asc">Name </option>
+              <option value="name_desc">Name </option>
               <option value="newest">Newest</option>
               <option value="oldest">Oldest</option>
               <option value="size_desc">Size â†“</option>
-              <option value="size_asc">Size â†‘</option>
+              <option value="size_asc">Size </option>
             </select>
 
             <div style="width:12px"></div>
@@ -774,7 +774,7 @@ async function listFiles(){
       const sizeHtml = SETTINGS.showFileSize ? `<div class="small-muted" style="font-size:12px">${fmtBytes(f.size||0)}</div>` : '';
       const dateHtml = SETTINGS.showUploadDate ? `<div class="small-muted" style="font-size:12px">${(meta.uploadedAt ? new Date(meta.uploadedAt).toLocaleString() : '')}</div>` : '';
 
-      const previewInner = isImage ? `<img src="${url}" alt="${f.name}" class="preview">` : `<div style="font-size:36px;color:var(--muted)">ðŸ“„</div>`;
+      const previewInner = isImage ? `<img src="${url}" alt="${f.name}" class="preview">` : `<div style="font-size:36px;color:var(--muted)"></div>`;
 
       card.innerHTML = `
         <div class="select-checkbox" title="Select" data-name="${f.name}" role="checkbox" aria-checked="${selectedFiles.has(f.name)}">${ selectedFiles.has(f.name) ? 'âœ“' : '' }</div>
@@ -832,7 +832,7 @@ async function listFiles(){
     // pagination UI
     if(totalPages > 1){
       const pg = $('#pagination');
-      const prev = document.createElement('button'); prev.className='btn small secondary'; prev.textContent='â€¹'; prev.disabled = currentPage===1;
+      const prev = document.createElement('button'); prev.className='btn small secondary'; prev.textContent='¹'; prev.disabled = currentPage===1;
       prev.addEventListener('click', ()=>{ currentPage = Math.max(1, currentPage-1); listFiles();});
       pg.appendChild(prev);
 
@@ -846,7 +846,7 @@ async function listFiles(){
         pg.appendChild(b);
       }
 
-      const next = document.createElement('button'); next.className='btn small secondary'; next.textContent='â€º'; next.disabled = currentPage===totalPages;
+      const next = document.createElement('button'); next.className='btn small secondary'; next.textContent=''; next.disabled = currentPage===totalPages;
       next.addEventListener('click', ()=>{ currentPage = Math.min(totalPages, currentPage+1); listFiles();});
       pg.appendChild(next);
     }
