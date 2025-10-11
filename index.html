@@ -226,7 +226,6 @@
         <input id="viewId" class="input" type="password" placeholder="Input view id" aria-label="View ID" />
         <div class="login-actions" style="margin-top:8px">
           <button id="loginBtn" class="btn primary">Log In</button>
-          <button id="demoLogin" class="btn ghost" title="Demo login">Demo</button>
         </div>
         <div id="loginError" class="login-error" role="alert"></div>
       </div>
@@ -1024,9 +1023,6 @@ function setupUI(){
     const val = $('#viewId').value.trim();
     if(val === VIEW_ID){ sessionStorage.setItem('loggedIn','true'); $('#loginPage').style.display='none'; $('#appPage').style.display='block'; listFiles(); }
     else showLoginError('Incorrect ID');
-  });
-  $('#demoLogin').addEventListener('click', ()=> {
-    sessionStorage.setItem('loggedIn','demo'); $('#loginPage').style.display='none'; $('#appPage').style.display='block'; listFiles();
   });
 
   // file input
